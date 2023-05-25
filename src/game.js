@@ -1,27 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styles from "./index.module.css";
-import { getInitItems, calculateWinner } from "./share";
+import { initItems, calculateWinner } from "./share";
 
 function Game() {
-  const [isNextX, setIsNextX] = React.useState(false);
-  const [values, setValues] = React.useState(getInitItems());
-  const [winner, setWinner] = React.useState(undefined);
-  React.useEffect(() => {
-    setWinner(calculateWinner(values));
-  }, [values]);
+  console.log("render Game!!!");
+
+  const [isNextX, setIsNextX] = useState(false);
+  const [values, setValues] = useState(initItems);
+  const winner = calculateWinner(values);
+
   function handleSquareClick(i) {
+    function changeValue(index, value) {
+      setValues(Object.assign({}, values, { [index]: value }));
+    }
     if (values[i] || winner) return;
     isNextX ? changeValue(i, "X") : changeValue(i, "O");
     setIsNextX(!isNextX);
   }
-  function changeValue(index, value) {
-    setValues(Object.assign({}, values, { [index]: value }));
-  }
-  function reset() {
-    setValues(getInitItems());
-    setWinner(undefined);
-  }
+
   return (
     <div className={styles.game}>
       <Board
@@ -29,7 +26,9 @@ function Game() {
         handleSquareClick={handleSquareClick}
         isNextX={isNextX}
         winner={winner}
-        reset={reset}
+        reset={() => {
+          setValues(initItems);
+        }}
       ></Board>
     </div>
   );
