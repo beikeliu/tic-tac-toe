@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import styles from "./index.module.css";
 import { getInitItems, calculateWinner } from "./share";
 
@@ -39,28 +39,39 @@ Board.propTypes = {
   values: PropTypes.object,
   handleSquareClick: PropTypes.func,
   isNextX: PropTypes.bool,
-  winner: PropTypes.bool,
-  reset: PropTypes.func
-}
-function Board(props) {
-  let nextHtml = undefined;
-  if (props.winner) {
-    nextHtml = <>恭喜{props.winner}获胜！<button onClick={props.reset}>重置</button></>;
-  } else if(!Object.values(props.values).includes(undefined)) {
-    nextHtml = <>平局！<button onClick={props.reset}>重置</button></>;
-  } else {
-    nextHtml = <>下一步是：{props.isNextX ? "X" : "O"}</>;
+  winner: PropTypes.string,
+  reset: PropTypes.func,
+};
+function Board({ values, handleSquareClick, isNextX, winner, reset }) {
+  function Tip() {
+    if (winner) {
+      return (
+        <>
+          恭喜{winner}获胜！<button onClick={reset}>重置</button>
+        </>
+      );
+    } else if (!Object.values(values).includes(undefined)) {
+      return (
+        <>
+          平局！<button onClick={reset}>重置</button>
+        </>
+      );
+    } else {
+      return <>下一步是：{isNextX ? "X" : "O"}</>;
+    }
   }
   return (
     <div className={styles.board}>
-      <div className={styles.next}>{nextHtml}</div>
-      {Object.keys(props.values).map((key) => (
+      <div className={styles.tip}>
+        <Tip />
+      </div>
+      {Object.keys(values).map((key) => (
         <Square
           key={key}
           handleSquareClick={() => {
-            props.handleSquareClick(key);
+            handleSquareClick(key);
           }}
-          value={props.values[key]}
+          value={values[key]}
         />
       ))}
     </div>
@@ -70,11 +81,11 @@ function Board(props) {
 Square.propTypes = {
   value: PropTypes.string,
   handleSquareClick: PropTypes.func,
-}
-function Square(props) {
+};
+function Square({ value, handleSquareClick }) {
   return (
-    <div className={styles.square} onClick={props.handleSquareClick}>
-      {props.value}
+    <div className={styles.square} onClick={handleSquareClick}>
+      {value}
     </div>
   );
 }
